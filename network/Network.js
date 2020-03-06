@@ -3,7 +3,6 @@ export const Network = {
   async httpGet(url, options = {}) {
     try {
       const response = await fetch(url, options);
-      console.log("RESPONSE FETCH", response);
       if (response.status >= 400) {
         throw new Error("Something wrong!");
       }

@@ -8,11 +8,13 @@ import { setUserInfos, setUserRepos } from './store/actions/Actions';
 import { UserCard } from './components/UserCard';
 import { UserRepoList } from './components/UserRepoList';
 import { UIStatus } from './components/UIStatus';
+import { Snackbar } from 'react-native-paper';
 import * as Font from 'expo-font';
 
 export const Main = () => {
-  const [status, setUiState] = useState(UIStatus.NONE);
+  const [status, setUiState] = useState(UIStatus.SUCCESS);
   const [fontLoaded, setFontLoaded] = useState(false);
+  const [snackBarVisible, setSnackBarVisible] = useState(false);
 
   const userName = useSelector(state => {
     return state.userName
@@ -49,8 +51,6 @@ export const Main = () => {
   }
 
   const callWS = async (userName) => {
-    console.log("CALL WS with user name: ", userName);
-
     setUiState(UIStatus.LOADING);
 
     const [userInfos, userRepositories] = await Promise.all([
@@ -58,36 +58,54 @@ export const Main = () => {
       getUserRepos(userName)
     ]);
 
-    console.log("Error=", userInfos.error);
-
     if (userInfos.error) {
-      setUiState({
-        status: UIStatus.ERROR
-      });
+      setUiState(UIStatus.ERROR);
+      setSnackBarVisible(true);
       dispatch(setUserInfos({}));
       dispatch(setUserRepos([]));
     } else {
-      setUiState({
-        status: UIStatus.SUCCESS,
-      });
+      setUiState(UIStatus.SUCCESS);
       dispatch(setUserInfos(userInfos));
       dispatch(setUserRepos(userRepositories));
     }
-
-    //console.log("GET USER: ", userInfos);
-    //console.log("GET REPO: ", userRepositories);
   }
 
-  return fontLoaded ? (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#40c4ff' }}>
-      <View style={styles.container}>
-        <Header />
-        <SearchBar />
-      </View>
-      {!!Object.keys(userInfos).length ? (<UserCard />) : (null)}
-      {!!Object.keys(userRepositories).length ? (<UserRepoList />) : (null)}
-    </SafeAreaView>
-  ) : (<Text>Loading...</Text>)
+  const onFontLoaded = (userInfos, userRepositories) => {
+    switch (status) {
+      case UIStatus.ERROR:
+        return <SafeAreaView style={{ flex: 1, backgroundColor: '#40c4ff' }}>
+          <View style={styles.container}>
+            <Header />
+            <SearchBar />
+          </View>
+          <Snackbar
+            visible={snackBarVisible}
+            onDismiss={() => setSnackBarVisible(false)}
+            duration='3000'
+            action={{
+              label: 'Ok',
+              onPress: () => {
+                setSnackBarVisible(false)
+              },
+            }}>
+            Unknown user
+          </Snackbar>
+        </SafeAreaView>
+      case UIStatus.SUCCESS:
+      case UIStatus.LOADING:
+        return <SafeAreaView style={{ flex: 1, backgroundColor: '#40c4ff' }}>
+          <View style={styles.container}>
+            <Header />
+            <SearchBar />
+          </View>
+          {!!Object.keys(userInfos).length ? (<UserCard />) : (null)}
+          {!!Object.keys(userRepositories).length ? (<UserRepoList />) : (null)}
+        </SafeAreaView>
+      default:
+        return <Text>DEFAULT</Text>
+    }
+  }
+  return fontLoaded ? onFontLoaded(userInfos, userRepositories) : (<Text>Loading assets...</Text>)
 }
 
 const styles = StyleSheet.create({
