@@ -11,21 +11,26 @@ import { UIStatus } from './components/UIStatus';
 import { Snackbar } from 'react-native-paper';
 import * as Font from 'expo-font';
 
+/**
+ * @param nothing
+ * @returns Main object
+ * @summary Create a Main object
+ */
 export const Main = () => {
   const [status, setUiState] = useState(UIStatus.SUCCESS);
   const [fontLoaded, setFontLoaded] = useState(false);
   const [snackBarVisible, setSnackBarVisible] = useState(false);
 
   const userName = useSelector(state => {
-    return state.userName
+    return state.main.userName
   });
 
   const userInfos = useSelector(state => {
-    return state.userInfos
+    return state.main.userInfos
   });
 
   const userRepositories = useSelector(state => {
-    return state.userRepositories
+    return state.main.userRepositories
   });
 
   const dispatch = useDispatch();
@@ -57,6 +62,9 @@ export const Main = () => {
       getUser(userName),
       getUserRepos(userName)
     ]);
+
+    console.log("USER_INFOS", userInfos);
+    console.log("USER_REPOS", userRepositories);
 
     if (userInfos.error) {
       setUiState(UIStatus.ERROR);

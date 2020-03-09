@@ -6,13 +6,13 @@ import { useSelector } from 'react-redux';
 
 export const UserRepoList = () => {
     const userRepositories = useSelector(state => {
-        return state.userRepositories
+        return state.main.userRepositories
     });
 
     return <View style={styles.flexStyle}>
         <Card style={styles.cardStyle}>
             <Card.Content style={styles.flexStyle}>
-            <DataTable style={styles.flexStyle}>
+                <DataTable style={styles.flexStyle}>
                     <DataTable.Header>
                         <DataTable.Title>
                             <Text style={styles.headerTitleStyle}>
@@ -22,16 +22,16 @@ export const UserRepoList = () => {
                     </DataTable.Header>
                     <View style={styles.flexStyle}>
                         <ScrollView>
-                            {userRepositories.map(({name: repoName, id}) => 
+                            {userRepositories.map(({ name: repoName, id }) =>
                                 <DataTable.Row key={id}>
                                     <DataTable.Cell>
                                         <Text style={styles.cellStyle}>
-                                        {repoName}
+                                            {repoName}
                                         </Text>
-                                        </DataTable.Cell>
+                                    </DataTable.Cell>
                                 </DataTable.Row>
                             )}
-                        </ScrollView> 
+                        </ScrollView>
                     </View>
                 </DataTable>
             </Card.Content>
@@ -40,15 +40,15 @@ export const UserRepoList = () => {
 }
 
 const styles = StyleSheet.create({
-    flexStyle:{
+    flexStyle: {
         flex: 1,
     },
     cardStyle: {
         backgroundColor: '#00000011',
         flex: 1,
-        borderRadius:10, 
-        margin:10
-      },
+        borderRadius: 10,
+        margin: 10
+    },
     headerTitleStyle: {
         fontFamily: 'Oxanium-Regular',
         fontSize: 25
@@ -58,18 +58,4 @@ const styles = StyleSheet.create({
         fontSize: 20,
         color: '#00000088'
     },
-  });
-
- /*
-  <DataTable>
-        <DataTable.Header>
-            <DataTable.Title>Repo name</DataTable.Title>
-        </DataTable.Header>
-
-        
-        <DataTable.Row>
-            <DataTable.Cell>Frozen yogurt</DataTable.Cell>
-        </DataTable.Row>
-
-    </DataTable>
-    */
+});

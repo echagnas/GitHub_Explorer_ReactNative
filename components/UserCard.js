@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 
 export const UserCard = () => {
     const userInfos = useSelector(state => {
-        return state.userInfos
+        return state.main.userInfos
     });
 
     const { avatar_url: image, name } = userInfos;
